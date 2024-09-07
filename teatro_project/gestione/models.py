@@ -11,7 +11,7 @@ class Show(models.Model):
     company = models.CharField(max_length=100)
     date = models.DateField(default=None, null=True, blank=True)
     hour = models.TimeField(default="21:00", null=True, blank=True)
-    cover = models.ImageField(upload_to="gestione/covers", default="gestione/covers/default.webp")
+    cover = models.ImageField(upload_to="gestione/covers", default="gestione/covers/default.png")
     seats = models.JSONField(default=dict)
     seat_rows = models.IntegerField(default=15, validators=[
         MinValueValidator(1),
@@ -130,14 +130,11 @@ class Show(models.Model):
 
     def get_scheduled_shows():
         upcoming = Show.objects.filter(date__gte=datetime.today().date()).order_by("date")
-        print(str(len(upcoming)))
         return upcoming
 
 class Booking(models.Model):
     show = models.ForeignKey(Show,on_delete=models.CASCADE, related_name='bookings')
     user = models.ForeignKey(User,on_delete=models.CASCADE, blank=True, null=True, default=None, related_name='bookings')
-    seats_type = models.CharField(max_length=10, default="")
-    #seats_count = models.IntegerField(default=1)
     seats = models.JSONField(default=list)
 
     def set_seats(self, row, start_col, seats_number):

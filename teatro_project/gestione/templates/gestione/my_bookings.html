@@ -83,10 +83,10 @@
       <div class="card-body align-left">
         <h4 class="card-title-center"><b>Titolo</b>: {{ s.show.title }}</h4>
         <div class="card-text text-left">
+            <ul> Tipologia: {{ s.show.type }}</ul>
             <ul> Data: {{ s.show.date }}</ul>
             <ul> Ora: {{ s.show.hour }}</ul>
-            <ul> Tipologia posto: {{ s.seats_type }} </ul>
-            <ul> Numero posti: {{ s.seats_count }} </ul>
+            <ul> Posti: {{ s.get_seats }} </ul>
         </div>
           <a href="{% url 'gestione:show_detail'  s.show.pk %}" class="btn btn-info align-center">Vai alla scheda dello spettacolo</a>
           <br>
