@@ -1,0 +1,93 @@
+{% extends 'basebs.html' %}
+
+{% block title %} Spettacoli in programma{% endblock %}
+
+{% block header1 %}
+  <h1>Lista degli Spettacoli</h1>
+{% endblock %}
+
+{% block content %}
+
+    {% if "ok" in request.GET.delete %}
+<div id="info" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>Spettacolo eliminato con successo!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">
+                    Chiudi
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#info").modal("show");
+    });
+</script>
+{% endif %}
+
+{% if object_list|length == 0 %}
+    <h2>Nessuno spettacolo al momento</h2>
+{% else %}
+    <h2> {{ view.title }} {% if view.title == "Archivio:" %} {{ object_list.count }} {% if object_list.count != 1 %}spettacoli{% else %}spettacolo{% endif %} {% endif %}</h2>
+{% endif %}
+<br>
+
+{% for l in object_list %}
+<br>
+<div class="card">
+
+  <div class="card-body align-left">
+    <h5 class="card-title-center">{{ l.title }}</h5>
+    <div class="card-text text-left">
+        <ul> Tipologia: {{ l.type }} </ul>
+        <ul> Compagnia: {{ l.company }} </ul>
+        <ul> Data: {{ l.date }} </ul>
+        <ul> Ora: {{ l.hour }} </ul>
+        <ul> Valutazioni: {% if l.get_score > 0 %}{{ l.get_score |floatformat:1 }}/5 {% else %} Nessun voto al momento {% endif %}</ul>
+
+        {% if l.scheduled and l.bookable %}
+            <ul> Posti disponibili: {{ l.get_free_seats }}</ul>
+        {% endif %}
+    </div>
+  </div>
+
+ <div class="card-header">
+     <a href="{% url 'gestione:show_detail'  l.pk %}" class="btn btn-info align-default">Vai alla scheda dello spettacolo</a>
+     <br>
+     <br>
+    {% if "Operatori" in user.groups.all.0.name or user.is_staff %}
+        <a href="{% url 'gestione:booking_list' l.pk %}" class="btn btn-info align-center">Visualizza le prenotazioni</a>
+        <br>
+        <br>
+        <a href="{% url 'gestione:delete_show' l.pk %}" class="btn btn-danger align-center">Elimina spettacolo</a>
+        <br>
+        <br>
+    {% endif %}
+
+    {% if l.scheduled  %}
+        <a href="{% url 'gestione:makebooking' l.pk %}" class="btn btn-primary align-center">Prenota un posto</a>
+    {% else %}
+        {% if l.bookable == False %}
+            Posti non disponibili
+        {%  else  %}
+            {% if l.scheduled == False %}
+                Spettacolo già avvenuto
+                <br>
+            {% endif %}
+        {% endif %}
+     {% endif %}
+  </div>
+
+</div>
+
+<br>
+{%endfor%}
+
+<br>
+
+{% endblock %}

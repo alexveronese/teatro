@@ -1,0 +1,48 @@
+{% extends 'basebs.html' %}
+
+{% block title %} Home di Gestione {% endblock %} 
+
+{% block header1 %}
+  <h1>Home di Gestione</h1>
+  <p>Benvenuto
+    {% if user.is_authenticated %}
+     {{ user.username }}!
+    {% else %}
+    Utente non registrato
+    {% endif %}
+  </p> 
+{% endblock %}
+
+{% block content %} 
+
+    <h2>Funzionalità:</h2>
+
+<br>
+
+<div class="list-group">
+  <a href="{% url 'gestione:find_show' %}" class="list-group-item list-group-item-info">Cerca uno spettacolo</a>
+  <a href="{% url 'gestione:scheduled_show' %}" class="list-group-item list-group-item-info">Visualizza spettacoli in programma</a>
+  <a href="{% url 'gestione:scored_show' %}" class="list-group-item list-group-item-info">Visualizza spettacoli in base alle votazioni </a>
+  <a href="{% url 'gestione:show_list' %}" class="list-group-item list-group-item-info">Visualizza archivio spettacoli</a>
+  <a href="{% url 'gestione:my_bookings' %}" class="list-group-item list-group-item-info">Le mie prenotazioni</a>
+</div>
+
+<br>
+
+{% if user.is_staff %}
+<br>
+<a href="{% url 'registerop' %}" class="list-group-item list-group-item-danger">Iscrivi un operatore</a>
+<br>
+{% endif %}
+
+
+{% if "Operatori" in user.groups.all.0.name or user.is_staff %}
+<br>
+<a href="{% url 'gestione:create_show' %}" class="list-group-item list-group-item-warning">Aggiungi uno spettacolo</a>
+<a href="{% url 'gestione:show_list' %}" class="list-group-item list-group-item-warning">Gestisci spettacoli</a>
+<a href="{% url 'gestione:all_bookings_list' %}" class="list-group-item list-group-item-warning">Gestisci prenotazioni</a>
+<br>
+{% endif %}
+
+
+{% endblock %}

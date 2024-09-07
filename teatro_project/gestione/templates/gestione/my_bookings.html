@@ -1,0 +1,116 @@
+{% extends 'basebs.html' %}
+
+{% block title %} Prenotazioni {% endblock %}
+
+{% block header1 %}
+  <h1>Lista prenotazioni</h1>
+{% endblock %}
+
+{% block content %}
+    {% if "ok" in request.GET.makeres or "err" in request.GET.makeres  %}
+
+        <div id="info" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>{% if "ok" in request.GET.makeres %}Prenotazione registrata con successo!{% else %}Si è verificato un errore durante la registrazione della prenotazione!{% endif %} </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Chiudi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function(){
+                $("#info").modal('show');
+            });
+        </script>
+    {% endif %}
+
+    {% if "ok" in request.GET.delete or "err" in request.GET.delete  %}
+
+        <div id="info" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>{% if "ok" in request.GET.delete %}Prenotazione eliminata con successo!{% else %}Si è verificato un errore durante l'eliminazione della prenotazione!{% endif %} </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Chiudi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function(){
+                $("#info").modal('show');
+            });
+        </script>
+    {% endif %}
+
+{% if num_bookings %}
+
+    <h2> Prenotazioni correnti </h2>
+
+    {% for s in upcoming_book %}
+    <br>
+    <div class="card">
+
+      <div class="card-body align-left">
+        <h4 class="card-title-center"><b>Titolo</b>: {{ s.show.title }}</h4>
+        <div class="card-text text-left">
+            <ul> Tipologia: {{ s.show.type }}</ul>
+            <ul> Data: {{ s.show.date }}</ul>
+            <ul> Ora: {{ s.show.hour }}</ul>
+            <ul> Posti: {{ s.get_seats }} </ul>
+        </div>
+          <a href="{% url 'gestione:show_detail' s.show.pk %}" class="btn btn-info align-center">Vai alla scheda dello spettacolo</a>
+          <br>
+          <br>
+          <a href="{% url 'gestione:delete_booking' s.pk %}" class="btn btn-danger align-center">Elimina prenotazione</a>  </div>
+    </div>
+
+    {%endfor%}
+
+    <br>
+    <h2>Prenotazioni passate</h2>
+
+     {% for s in old_book %}
+    <br>
+    <div class="card">
+
+      <div class="card-body align-left">
+        <h4 class="card-title-center"><b>Titolo</b>: {{ s.show.title }}</h4>
+        <div class="card-text text-left">
+            <ul> Data: {{ s.show.date }}</ul>
+            <ul> Ora: {{ s.show.hour }}</ul>
+            <ul> Tipologia posto: {{ s.seats_type }} </ul>
+            <ul> Numero posti: {{ s.seats_count }} </ul>
+        </div>
+          <a href="{% url 'gestione:show_detail'  s.show.pk %}" class="btn btn-info align-center">Vai alla scheda dello spettacolo</a>
+          <br>
+          <br>
+          {% if s.user_has_reviewed == False %}
+             <a href="{% url "gestione:leave_review" s.show.pk %}" class="btn btn-light align-center">Lascia una recensione</a>
+          {% endif %}
+      </div>
+
+    </div>
+
+    <br>
+    {%endfor%}
+
+    <br>
+
+{% else %}
+    <h2>Nessuna prenotazione effettuata!</h2>
+    <br>
+    <br>
+    <h3>Visualizza i prossimi spettacoli:</h3>
+    <br>
+    <a href="{% url 'gestione:scheduled_show' %}" class="btn btn-success align-center">In programma</a>
+    <br>
+{% endif %}
+
+{% endblock %}

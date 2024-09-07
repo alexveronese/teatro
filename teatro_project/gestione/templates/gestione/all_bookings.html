@@ -1,0 +1,105 @@
+{% extends 'basebs.html' %}
+
+{% block title %} Prenotazioni {% endblock %}
+
+{% block header1 %}
+  <h1>Lista prenotazioni</h1>
+{% endblock %}
+
+{% block content %}
+
+    {% if "ok" in request.GET.delete %}
+
+        <div id="info" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>{% if "ok" in request.GET.delete %}Prenotazione eliminata con successo!{% else %}Si è verificato un errore durante l'eliminazione della prenotazione!{% endif %} </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Chiudi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function(){
+                $("#info").modal('show');
+            });
+        </script>
+    {% endif %}
+
+
+
+    {% if num_bookings %}
+
+        <h2> Spettacoli in programma </h2>
+
+        {% for s in upcoming_shows %}
+            <br>
+            <div class="card">
+
+              <div class="card-body align-left">
+                <h3 class="card-title-center"><b>Spettacolo: <a href="{% url "gestione:show_detail" s.pk %}">{{ s.title }}</a></b></h3>
+                <br>
+                <br>
+                  <h4> Prenotazioni: </h4>
+                    {% if s.bookings.all.count == 0 %}
+                        <p>Nessuna prenotazione al momento!</p>
+                    {% endif %}
+                  {% for b in s.bookings.all %}
+                      <br>
+                      <h5>Utente: <a href="{% url "gestione:user_booking_list" b.user.pk %}">{{ b.user }}</a> </h5>
+                    <div class="card-text text-left">
+                      <ul> Posti: {{ b.get_seats }} </ul>
+                      <br>
+                    </div>
+                      <a href="{% url 'gestione:delete_booking' b.pk %}" class="btn btn-danger align-center">Elimina prenotazione</a>
+                      <br>
+                      <br>
+                  {% endfor %}
+                  <br>
+                  <br>
+
+              </div>
+            </div>
+
+        {% endfor %}
+        <br>
+        <h2>Spettacoli già avvenuti</h2>
+        {% for s in old_shows %}
+            <br>
+            <div class="card">
+
+              <div class="card-body align-left">
+                <h3 class="card-title-center"><b>Spettacolo: <a href="{% url "gestione:show_detail" s.pk %}">{{ s.title }}</a></b></h3>
+                  <br>
+                  <br>
+                  <h4> Prenotazioni: </h4>
+                    {% if s.bookings.all.count == 0 %}
+                        <p>Nessuna prenotazione al momento!</p>
+                    {% endif %}
+                  {% for b in s.bookings.all %}
+                      <br>
+                      <h5>Utente: <a href="{% url "gestione:user_booking_list" b.user.pk %}">{{ b.user }}</a> </h5>
+                    <div class="card-text text-left">
+                      <ul> Posti: {{ b.get_seats }} </ul>
+                      <br>
+                    </div>
+                      <a href="{% url 'gestione:delete_booking' b.pk %}" class="btn btn-danger align-center">Elimina prenotazione</a>
+                      <br>
+                      <br>
+                  {% endfor %}
+              </div>
+            </div>
+
+        {% endfor %}
+
+        <br>
+
+        <br>
+    {% else %}
+        <h2>Nessuna prenotazione effettuata!</h2>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "basebs.html" %}
+{% block title %}Recensioni{% endblock title %}
+{% block header1 %}
+    <h1>Recensioni effettuate</h1>
+{% endblock header1 %}
+
+{% block content %}
+
+    {% if "ok" in request.GET.delete or "err" in request.GET.delete  %}
+
+        <div id="info" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>{% if "ok" in request.GET.delete %}Recensione eliminata con successo!{% else %}Si è verificato un errore durante l'eliminazione della recensione!{% endif %} </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Chiudi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function(){
+                $("#info").modal('show');
+            });
+        </script>
+    {% endif %}
+
+    <h2>Hai effettuato {{object_list.count}} {% if object_list.count != 1 %}recensioni{% else %}recensione{% endif %}</h2>
+    {% for r in object_list %}
+        <div class="card mb-2">
+            <div class="card-header">
+                <a href="{% url "gestione:show_detail" r.show.id %}">{{r.show.title}}</a>
+            </div>
+            <div class="card-body">
+                <p><b>{{r.score}}</b>: {{r.text}}</p>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-danger" href="{% url 'gestione:delete_review' r.id %}">Elimina Recensione</a>
+            </div>
+        </div>
+    {% endfor %}
+    {% if object_list.count == 0 %}
+        <br>
+        <a href="{% url "gestione:my_bookings"  %}"> Clicca qui per andare a "Le mie prenotazioni" e lasciare una recensione per gli spettacoli già visti </a>
+        <br>
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,80 @@
+{% extends "basebs.html" %}
+
+{% block title %}Scheda {{object.title}}{% endblock title %}
+{% block header1 %}
+    <h1>Dettagli Spettacolo</h1>
+{% endblock header1 %}
+{% block content %}
+    <h2><b>Titolo</b>: {{object.title}}</h2>
+    <br>
+    <p><b>Tipologia</b>: {{object.type}}</p>
+    <p><b>Compagnia</b>: {{object.company}}</p>
+    <p><b>Data</b>: {{object.date}}</p>
+    <p><b>Ora</b>: {{object.hour}}</p>
+    <p><img src="{{object.cover.url}}"/></p>
+    <p><b>Valutazioni</b>: {{view.get_show_score|floatformat:1}}/5</p>
+    <br>
+    <br>
+
+    {% if object.scheduled == False %}
+        <h5><ins>Spettacolo già avvenuto</ins></h5>
+    {% else %}
+        <h5>Spettacolo in programma</h5>
+        <br>
+        {% if object.bookable == False %}
+            <p>Posti terminati</p>
+        {% else %}
+            {% if view.can_user_book %}
+                <p> Posti disponibili: {{ object.get_free_seats }}</p>
+                <br>
+                <p><a href="{% url 'gestione:makebooking' object.pk %}" class="btn btn-info align-center">Prenota un posto</a></p>
+            {% else %}
+                {% if view.can_user_book == False and user.is_authenticated%}
+                    <p>Hai già effettuato una prenotazione per questo spettacolo</p>
+                    <br>
+                    <p> <a href="{% url 'gestione:makebooking' object.pk %}" class="btn btn-info align-center"> Modifica prenotazione </a></p>
+                {% else %}
+                    {% if user.is_authenticated == False%}
+                        <p> Posti disponibili: {{ l.get_free_seats }}</p>
+                        <br>
+                        <p><a href="{% url 'gestione:makebooking' object.pk %}" class="btn btn-info align-center">Prenota un posto</a></p>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    <br>
+    {% if view.can_user_review %}
+        <a href="{% url "gestione:leave_review" object.id %}" class="btn btn-light align-center">Lascia una recensione</a>
+        <br>
+        <br>
+    {%  else %}
+        {% if view.user_made_review %}
+            <p> Grazie per la tua recensione!</p>
+            <br>
+            <br>
+        {% endif %}
+    {% endif %}
+    {% if object.reviews.all.count == 0 %}
+        <p>Nessuna recensione al momento!</p>
+    {% else  %}
+        {% if user.is_authenticated %}
+            <p><b>Recensioni degli utenti</b>:</p>
+            <div class="row">
+                {% for r in object.reviews.all %}
+                    <div class="col-md-4">
+                        <div class="card mb-2">
+                            <div class="card-header">{{r.user.username}} ha votato {{r.score}}/5</div>
+                            <div class="card-body">{{r.text}}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <a href={% url "login" %}>Devi effettuare il login per visualizzare le recensioni di questo spettacolo </a>
+            <br>
+            <br>
+        {% endif %}
+
+    {% endif %}
+{% endblock content %}

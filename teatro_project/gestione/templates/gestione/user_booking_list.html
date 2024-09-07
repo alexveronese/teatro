@@ -1,0 +1,38 @@
+{% extends 'basebs.html' %}
+
+{% block title %} Prenotazioni {{ object.user }}{% endblock %}
+
+{% block header1 %}
+  <h1>Lista delle prenotazioni</h1>
+{% endblock %}
+
+{% block content %}
+
+
+<h2> {% if object_list.count != 1 %}Prenotazioni{% else %}Prenotazione{% endif %} di "{{ user_name }}" </h2>
+
+<br>
+
+{% for b in object_list %}
+<br>
+<div class="card">
+
+  <div class="card-body align-left">
+    <h5 class="card-title-center">{{ l.title }}</h5>
+    <div class="card-text text-left">
+        <ul><a href="{% url "gestione:show_detail" b.show.pk %}">Spettacolo: {{ b.show.title }}</a> </ul>
+        <ul> Posti: {{ b.get_seats }} </ul>
+    </div>
+          <br>
+          <a href="{% url 'gestione:delete_booking' b.pk %}" class="btn btn-danger align-center">Elimina prenotazione</a>
+          <br>
+  </div>
+
+</div>
+
+<br>
+{%endfor%}
+
+<br>
+
+{% endblock %}

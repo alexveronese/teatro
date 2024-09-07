@@ -1,0 +1,50 @@
+{% extends 'basebs.html' %}
+
+{% load static %}
+
+{% block title %} Biglietteria Teatro{% endblock %}
+
+{% block content %}
+    {% if shows|length == 0 %}
+        <h2>Non ci sono spettacoli in programma</h2>
+    {% else %}
+        <h2>Spettacoli in programma:</h2>
+        <br>
+    {% endif %}
+    <div class="row">
+        {% for m in shows %}
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <a href={% url 'gestione:show_detail' m.pk %}>{{m.title}}</a>
+                    </div>
+                    <div class="card-body">Di <br> {{m.company}}</div>
+                    <div class="card-footer">{{m.type}}</div>
+                </div>
+            </div>
+        {% endfor %}
+        {% if see_more %}
+        <div class="col d-flex align-items-center justify-content-center">
+            <a href={% url "gestione:show_list" %}> <br> vedi altri...</a>
+        </div>
+        {% endif %}
+    </div>
+    {% if recommended != None %}
+        <br>
+        <h2>Consigliati per te:</h2>
+        <br>
+        <div class="row">
+            {% for m in recommended %}
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <a href={% url 'gestione:show_detail' m.pk %}>{{m.title}}</a>
+                        </div>
+                        <div class="card-body">Di <br> {{m.company}}</div>
+                        <div class="card-footer">{{m.type}}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock content %}
