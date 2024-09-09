@@ -48,14 +48,18 @@ def get_nmost_similar(user: User, n=None):
         res.append((u, dot_prod/(sqrt(mag)*user_mag_sqrt)))
 
     # sort by descending similarity
-    res.sort(key=lambda ut: ut[1], reverse=True)
+    try:
+        res.sort(key=lambda ut: ut[1], reverse=True)
+    except Exception as e:
+        print(e)
+
     if n != None:
         res = res[:n]
     return res
 
 
 def get_recommended_movies(user: User, n):
-    sim_us = get_nmost_similar(user, 20)
+    sim_us = get_nmost_similar(user, 10)
     us_movies = (get_user_shows(user))
     upcoming = Show.get_scheduled_shows()
     rec_dict = {}
@@ -71,7 +75,11 @@ def get_recommended_movies(user: User, n):
             break
 
     rec = [ (s, rec_dict[s]) for s in rec_dict ]
-    rec.sort(key=lambda rm: rm[1], reverse=True)
+    try:
+        rec.sort(key=lambda rm: rm[1], reverse=True)
+    except Exception as e:
+        print(e)
+
     rec = [ r[0] for r in rec ]
 
     if len(rec) < n:
