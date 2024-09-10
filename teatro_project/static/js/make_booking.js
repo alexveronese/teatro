@@ -49,7 +49,7 @@ xhttp.onload = function() {
                 pushstr = "reserving";
                 reserving_seats.push(node.id.split("_")[0]);
             } else {
-                if(i < (nSeats - 5*cols)) {
+                if(i < (nSeats - (data["palco_rows"]*cols))) {
                     node.style.backgroundColor = "LightGrey";
                 } else {
                     node.style.backgroundColor = "LightPink";
